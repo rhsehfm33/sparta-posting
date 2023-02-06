@@ -4,10 +4,7 @@ import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.entity.Board;
 import com.sparta.posting.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +26,10 @@ public class BoardController {
     @PutMapping("/api/boards/{id}")
     public Long updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
         return boardService.update(id, requestDto);
+    }
+
+    @DeleteMapping("/api/boards/{id}")
+    public Long deleteBoard(@PathVariable Long id) {
+        return boardService.deleteBoard(id);
     }
 }

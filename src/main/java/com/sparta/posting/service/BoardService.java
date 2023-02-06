@@ -6,6 +6,7 @@ import com.sparta.posting.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -33,5 +34,11 @@ public class BoardService {
         );
         board.update(requestDto);
         return board.getId();
+    }
+
+    @Transactional
+    public Long deleteBoard(Long id) {
+        boardRepository.deleteById(id);
+        return id;
     }
 }
