@@ -3,6 +3,7 @@ package com.sparta.posting.service;
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardResponseDto;
 import com.sparta.posting.entity.Board;
+import com.sparta.posting.mapper.BoardMapper;
 import com.sparta.posting.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,19 +16,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final BoardMapper boardMapper;
 
     @Transactional
     public BoardResponseDto createBoard(BoardRequestDto requestDto) {
-        Board board = new Board(requestDto);
+        Board board = boardMapper.toEntity(requestDto);
         boardRepository.save(board);
-        return new BoardResponseDto(board);
+        return boardMapper.toDto(board);
     }
 
     @Transactional
     public List<BoardResponseDto> getBoards() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         List<BoardResponseDto> boardResponseDtoList = boardList.stream()
-                .map(board -> new BoardResponseDto(board))
+                .map(board -> boardMapper.toDto(board))
                 .collect(Collectors.toList());
         return boardResponseDtoList;
     }
@@ -37,7 +39,11 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        board.update(requestDto);
+
+        board.setUsername(requestDto.getUsername());
+        board.setContents(requestDto.getContents());
+        board.setPassword(requestDto.getPassword());
+
         return board.getId();
     }
 
