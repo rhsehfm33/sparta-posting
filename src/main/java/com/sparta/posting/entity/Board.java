@@ -28,4 +28,10 @@ public class Board extends Timestamped {
         this.password = boardRequestDto.getPassword();
         this.contents = boardRequestDto.getContents();
     }
+
+    public void update(BoardRequestDto requestDto) {
+        this.username = requestDto.getUsername();
+        this.password = requestDto.getPassword();
+        this.contents = requestDto.getContents();
+    }
 }

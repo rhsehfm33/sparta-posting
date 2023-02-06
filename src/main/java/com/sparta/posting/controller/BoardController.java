@@ -25,4 +25,9 @@ public class BoardController {
     public List<Board> getBoards() {
         return boardService.getBoards();
     }
+
+    @PutMapping("/api/boards/{id}")
+    public Long updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
+        return boardService.update(id, requestDto);
+    }
 }

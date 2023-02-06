@@ -25,4 +25,13 @@ public class BoardService {
     public List<Board> getBoards() {
         return boardRepository.findAllByOrderByCreatedAtDesc();
     }
+
+    @Transactional
+    public Long update(Long id, BoardRequestDto requestDto) {
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+        board.update(requestDto);
+        return board.getId();
+    }
 }
