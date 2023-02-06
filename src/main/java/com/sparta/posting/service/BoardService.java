@@ -1,14 +1,15 @@
 package com.sparta.posting.service;
 
 import com.sparta.posting.dto.BoardRequestDto;
+import com.sparta.posting.dto.BoardResponseDto;
 import com.sparta.posting.entity.Board;
 import com.sparta.posting.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,15 +17,19 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public Board createBoard(BoardRequestDto requestDto) {
+    public BoardResponseDto createBoard(BoardRequestDto requestDto) {
         Board board = new Board(requestDto);
         boardRepository.save(board);
-        return board;
+        return new BoardResponseDto(board);
     }
 
     @Transactional
-    public List<Board> getBoards() {
-        return boardRepository.findAllByOrderByCreatedAtDesc();
+    public List<BoardResponseDto> getBoards() {
+        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
+        List<BoardResponseDto> boardResponseDtoList = boardList.stream()
+                .map(board -> new BoardResponseDto(board))
+                .collect(Collectors.toList());
+        return boardResponseDtoList;
     }
 
     @Transactional
