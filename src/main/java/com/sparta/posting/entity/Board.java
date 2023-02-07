@@ -1,6 +1,6 @@
 package com.sparta.posting.entity;
 
-import com.sparta.posting.dto.BoardRequestDto;
+import com.sparta.posting.enums.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +21,9 @@ public class Board extends Timestamped {
 
     @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @Column(nullable = false)
     private String contents;

@@ -1,5 +1,6 @@
 package com.sparta.posting.dto;
 
+import com.sparta.posting.enums.Category;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,5 +8,6 @@ import lombok.Setter;
 @Setter
 public class BoardResponseDto {
     private String username;
+    private Category category;
     private String contents;
 }
