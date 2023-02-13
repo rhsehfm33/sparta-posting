@@ -5,8 +5,7 @@ import com.sparta.posting.dto.SignupRequestDto;
 import com.sparta.posting.entity.User;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
-import com.sparta.posting.util.ApiResponse;
-import com.sparta.posting.util.ApiResponseConverter;
+import com.sparta.posting.dto.ApiResponse;
 import com.sparta.posting.util.JwtUtil;
 import com.sparta.posting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,7 @@ public class UserService {
 
         User newUser = new User(signupRequestDto);
         userRepository.save(newUser);
-        return ApiResponseConverter.convert(ErrorMessage.ERROR_NONE, HttpStatus.CREATED);
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.CREATED);
     }
 
     @Transactional(readOnly = true)
@@ -57,6 +56,6 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
-        return ApiResponseConverter.convert(ErrorMessage.ERROR_NONE, HttpStatus.OK);
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK);
     }
 }

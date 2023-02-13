@@ -3,7 +3,7 @@ package com.sparta.posting.controller;
 import com.sparta.posting.dto.LoginRequestDto;
 import com.sparta.posting.dto.SignupRequestDto;
 import com.sparta.posting.service.UserService;
-import com.sparta.posting.util.ApiResponse;
+import com.sparta.posting.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;

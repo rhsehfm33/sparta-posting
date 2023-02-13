@@ -7,8 +7,7 @@ import com.sparta.posting.entity.User;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.repository.BoardRepository;
 import com.sparta.posting.repository.UserRepository;
-import com.sparta.posting.util.ApiResponse;
-import com.sparta.posting.util.ApiResponseConverter;
+import com.sparta.posting.dto.ApiResponse;
 import com.sparta.posting.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class BoardService {
     public ApiResponse<BoardResponseDto> createBoard(BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
         String token = jwtUtil.resolveToken(httpServletRequest);
         if (token == null || jwtUtil.validateToken(token) == false) {
-            return ApiResponseConverter.convert(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
+            return new ApiResponse(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
         }
 
         // 토큰에서 사용자 정보 가져오기
@@ -45,7 +44,7 @@ public class BoardService {
         Board newBoard = new Board(boardRequestDto, user);
         boardRepository.save(newBoard);
 
-        return ApiResponseConverter.convert(ErrorMessage.ERROR_NONE, HttpStatus.CREATED, new BoardResponseDto(newBoard));
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.CREATED, new BoardResponseDto(newBoard));
     }
 
     @Transactional
@@ -55,14 +54,14 @@ public class BoardService {
                 .map(board -> new BoardResponseDto(board))
                 .collect(Collectors.toList());
 
-        return ApiResponseConverter.convert(ErrorMessage.ERROR_NONE, HttpStatus.OK, boardResponseDtoList);
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK, boardResponseDtoList);
     }
 
     @Transactional
     public ApiResponse update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
         String token = jwtUtil.resolveToken(httpServletRequest);
         if (token == null || jwtUtil.validateToken(token) == false) {
-            return ApiResponseConverter.convert(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
+            return new ApiResponse(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
         }
 
         // 토큰에서 사용자 정보 가져오기
@@ -79,14 +78,14 @@ public class BoardService {
 
         board.update(boardRequestDto, user);
 
-        return ApiResponseConverter.convert(ErrorMessage.ERROR_NONE, HttpStatus.OK, new BoardResponseDto(board));
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK, new BoardResponseDto(board));
     }
 
     @Transactional
     public ApiResponse deleteBoard(Long id, HttpServletRequest httpServletRequest) {
         String token = jwtUtil.resolveToken(httpServletRequest);
         if (token == null || jwtUtil.validateToken(token) == false) {
-            return ApiResponseConverter.convert(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
+            return new ApiResponse(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
         }
 
         // 토큰에서 사용자 정보 가져오기
@@ -103,6 +102,6 @@ public class BoardService {
 
         boardRepository.delete(board);
 
-        return ApiResponseConverter.convert(ErrorMessage.ERROR_NONE, HttpStatus.OK);
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK);
     }
 }

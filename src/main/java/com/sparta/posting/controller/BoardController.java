@@ -3,7 +3,7 @@ package com.sparta.posting.controller;
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardResponseDto;
 import com.sparta.posting.service.BoardService;
-import com.sparta.posting.util.ApiResponse;
+import com.sparta.posting.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
