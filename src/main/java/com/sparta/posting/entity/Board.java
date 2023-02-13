@@ -15,9 +15,6 @@ public class Board extends Timestamped {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
-    private String password;
-
     @Enumerated(EnumType.STRING)
     private Category category;
 
@@ -28,14 +25,14 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Board(BoardRequestDto boardRequestDto) {
-        this.password = boardRequestDto.getPassword();
+    public Board(BoardRequestDto boardRequestDto, User user) {
+        this.user = user;
         this.category = boardRequestDto.getCategory();
         this.contents = boardRequestDto.getContents();
     }
 
-    public void update(BoardRequestDto boardRequestDto) {
-        this.password = boardRequestDto.getPassword();
+    public void update(BoardRequestDto boardRequestDto, User user) {
+        this.user = user;
         this.category = boardRequestDto.getCategory();
         this.contents = boardRequestDto.getContents();
     }

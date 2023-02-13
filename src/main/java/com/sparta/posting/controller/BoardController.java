@@ -7,6 +7,7 @@ import com.sparta.posting.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -15,8 +16,11 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/api/boards")
-    public ApiResponse<BoardResponseDto> createBoard(@RequestBody BoardRequestDto requestDto) {
-        return boardService.createBoard(requestDto);
+    public ApiResponse<BoardResponseDto> createBoard(
+            @RequestBody BoardRequestDto requestDto,
+            HttpServletRequest httpServletRequest
+    ) {
+        return boardService.createBoard(requestDto, httpServletRequest);
     }
 
     @GetMapping("/api/boards")
@@ -25,12 +29,19 @@ public class BoardController {
     }
 
     @PutMapping("/api/boards/{id}")
-    public Long updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto) {
-        return boardService.update(id, requestDto);
+    public ApiResponse updateBoard(
+            @PathVariable Long id,
+            @RequestBody BoardRequestDto requestDto,
+            HttpServletRequest httpServletRequest
+    ) {
+        return boardService.update(id, requestDto, httpServletRequest);
     }
 
     @DeleteMapping("/api/boards/{id}")
-    public Long deleteBoard(@PathVariable Long id) {
-        return boardService.deleteBoard(id);
+    public ApiResponse deleteBoard(
+            @PathVariable Long id,
+            HttpServletRequest httpServletRequest
+    ) {
+        return boardService.deleteBoard(id, httpServletRequest);
     }
 }
