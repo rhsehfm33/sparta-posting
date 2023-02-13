@@ -16,9 +16,6 @@ public class Board extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -27,16 +24,19 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public Board(BoardRequestDto boardRequestDto) {
-        this.username = boardRequestDto.getUsername();
         this.password = boardRequestDto.getPassword();
         this.category = boardRequestDto.getCategory();
         this.contents = boardRequestDto.getContents();
     }
 
     public void update(BoardRequestDto boardRequestDto) {
-        this.username = boardRequestDto.getUsername();
-        this.contents = boardRequestDto.getContents();
         this.password = boardRequestDto.getPassword();
+        this.category = boardRequestDto.getCategory();
+        this.contents = boardRequestDto.getContents();
     }
 }

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BoardRequestDto {
-    private String username;
+    private Long userId;
     private String password;
     private Category category;
     private String contents;

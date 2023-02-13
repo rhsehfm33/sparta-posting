@@ -15,4 +15,9 @@ public class ApiResponse<T> {
         this.code = httpStatus;
         this.data = dto;
     }
+
+    ApiResponse(String error, HttpStatus httpStatus) {
+        this.error = error;
+        this.code = httpStatus;
+    }
 }
