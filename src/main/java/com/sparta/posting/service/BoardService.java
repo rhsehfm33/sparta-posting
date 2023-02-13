@@ -4,7 +4,6 @@ import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardResponseDto;
 import com.sparta.posting.entity.Board;
 import com.sparta.posting.enums.ErrorMessage;
-import com.sparta.posting.mapper.BoardMapper;
 import com.sparta.posting.repository.BoardRepository;
 import com.sparta.posting.util.ApiResponse;
 import com.sparta.posting.util.ApiResponseConverter;
@@ -20,14 +19,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final BoardMapper boardMapper;
 
     @Transactional
-    public ApiResponse<BoardResponseDto> createBoard(BoardRequestDto requestDto) {
-        Board board = boardMapper.toEntity(requestDto);
+    public ApiResponse<BoardResponseDto> createBoard(BoardRequestDto boardRequestDto) {
+        Board board = new Board(boardRequestDto);
         boardRepository.save(board);
         return ApiResponseConverter.convert(
-                ErrorMessage.ERROR_NONE, HttpStatus.CREATED, boardMapper.toDto(board)
+                ErrorMessage.ERROR_NONE, HttpStatus.CREATED, new BoardResponseDto(board)
         );
     }
 
@@ -35,7 +33,7 @@ public class BoardService {
     public ApiResponse<List<BoardResponseDto>> getBoards() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         List<BoardResponseDto> boardResponseDtoList = boardList.stream()
-                .map(board -> boardMapper.toDto(board))
+                .map(board -> new BoardResponseDto(board))
                 .collect(Collectors.toList());
         return ApiResponseConverter.convert(
                 ErrorMessage.ERROR_NONE, HttpStatus.OK, boardResponseDtoList
@@ -48,9 +46,7 @@ public class BoardService {
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
 
-        board.setUsername(requestDto.getUsername());
-        board.setContents(requestDto.getContents());
-        board.setPassword(requestDto.getPassword());
+        board.update(requestDto);
 
         return board.getId();
     }
