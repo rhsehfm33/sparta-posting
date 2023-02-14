@@ -26,6 +26,7 @@ public class Board extends Timestamped {
     private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OrderBy("createdAt DESC")
     List<Comment> commentList;
 
     public Board(BoardRequestDto boardRequestDto, User user) {
