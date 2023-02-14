@@ -6,21 +6,29 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 public class BoardWholeResponseDto {
-    private UserOuterResponseDto user;
+    private Long id;
     private Category category;
     private String boardContent;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private UserOuterResponseDto user;
+    private List<CommentOuterResponseDto> commentList;
 
     public BoardWholeResponseDto(Board board) {
-        this.user = new UserOuterResponseDto(board.getUser());
+        this.id = board.getId();
         this.category = board.getCategory();
         this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
+        this.user = new UserOuterResponseDto(board.getUser());
+        this.commentList = board.getCommentList().stream()
+                .map(comment -> new CommentOuterResponseDto(comment))
+                .collect(Collectors.toList());
     }
 }

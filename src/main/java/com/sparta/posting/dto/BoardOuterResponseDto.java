@@ -10,12 +10,14 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class BoardOuterResponseDto {
+    private Long id;
     private Category category;
     private String boardContent;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     public BoardOuterResponseDto(Board board) {
+        this.id = board.getId();
         this.category = board.getCategory();
         this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();

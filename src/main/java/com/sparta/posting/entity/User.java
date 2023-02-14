@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.util.List;
 
 @Getter
@@ -29,8 +28,11 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Board> boardList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<Comment> commentList;
 
     public User(SignupRequestDto signupRequestDto) {
         this.username = signupRequestDto.getUsername();

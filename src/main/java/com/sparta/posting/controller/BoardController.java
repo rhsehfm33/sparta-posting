@@ -8,40 +8,42 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/boards")
 public class BoardController {
     private final BoardService boardService;
 
-    @PostMapping("/api/boards")
+    @PostMapping
     public ApiResponse<BoardWholeResponseDto> createBoard(
-            @RequestBody BoardRequestDto requestDto,
+            @RequestBody @Valid BoardRequestDto requestDto,
             HttpServletRequest httpServletRequest
     ) {
         return boardService.createBoard(requestDto, httpServletRequest);
     }
 
-    @GetMapping("/api/boards")
+    @GetMapping
     public ApiResponse<List<BoardWholeResponseDto>> getBoards() {
         return boardService.getBoards();
     }
 
-    @PutMapping("/api/boards/{id}")
+    @PutMapping("/{boardId}")
     public ApiResponse updateBoard(
-            @PathVariable Long id,
-            @RequestBody BoardRequestDto requestDto,
+            @PathVariable Long boardId,
+            @RequestBody @Valid BoardRequestDto requestDto,
             HttpServletRequest httpServletRequest
     ) {
-        return boardService.update(id, requestDto, httpServletRequest);
+        return boardService.update(boardId, requestDto, httpServletRequest);
     }
 
-    @DeleteMapping("/api/boards/{id}")
+    @DeleteMapping("/{boardId}")
     public ApiResponse deleteBoard(
-            @PathVariable Long id,
+            @PathVariable Long boardId,
             HttpServletRequest httpServletRequest
     ) {
-        return boardService.deleteBoard(id, httpServletRequest);
+        return boardService.deleteBoard(boardId, httpServletRequest);
     }
 }

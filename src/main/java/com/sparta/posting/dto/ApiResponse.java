@@ -7,17 +7,17 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class ApiResponse<T> {
     private ErrorMessage errorMessage;
-    private HttpStatus code;
+    private int code;
     private T data;
 
     public ApiResponse(ErrorMessage errorMessage, HttpStatus httpStatus, T dto) {
         this.errorMessage = errorMessage;
-        this.code = httpStatus;
+        this.code = httpStatus.value();
         this.data = dto;
     }
 
     public ApiResponse(ErrorMessage errorMessage, HttpStatus httpStatus) {
         this.errorMessage = errorMessage;
-        this.code = httpStatus;
+        this.code = httpStatus.value();
     }
 }
