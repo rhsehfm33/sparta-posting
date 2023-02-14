@@ -1,6 +1,5 @@
 package com.sparta.posting.controller;
 
-import com.sparta.posting.dto.ApiResponseData;
 import com.sparta.posting.dto.CommentOuterResponseDto;
 import com.sparta.posting.dto.CommentRequestDto;
 import com.sparta.posting.service.CommentService;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,16 +32,16 @@ public class CommentController {
             @PathVariable Long commentId,
             @RequestBody @Valid CommentRequestDto commentRequestDto,
             HttpServletRequest httpServletRequest
-    ) {
+    ) throws AccessDeniedException {
         return commentService.updateComment(commentId, commentRequestDto, httpServletRequest);
     }
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponseData deleteComment(
+    public void deleteComment(
             @PathVariable Long commentId,
             HttpServletRequest httpServletRequest
-    ) {
-        return commentService.deleteComment(commentId, httpServletRequest);
+    ) throws AccessDeniedException {
+        commentService.deleteComment(commentId, httpServletRequest);
     }
 }

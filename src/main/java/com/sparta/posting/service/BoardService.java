@@ -5,10 +5,9 @@ import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardWholeResponseDto;
 import com.sparta.posting.entity.Board;
 import com.sparta.posting.entity.User;
-import com.sparta.posting.enums.ErrorType;
+import com.sparta.posting.enums.UserRoleEnum;
 import com.sparta.posting.repository.BoardRepository;
 import com.sparta.posting.repository.UserRepository;
-import com.sparta.posting.dto.ApiResponseData;
 import com.sparta.posting.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +61,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardWholeResponseDto update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
+    public BoardWholeResponseDto update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) throws AccessDeniedException {
         String token = jwtUtil.resolveToken(httpServletRequest);
 
         if (jwtUtil.validateToken(token) == false) {
@@ -79,6 +79,10 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND)
         );
+
+        if (user.getRole() != UserRoleEnum.ADMIN && board.getUser() != user) {
+            throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED);
+        }
 
         board.update(boardRequestDto, user);
 
@@ -86,7 +90,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(Long id, HttpServletRequest httpServletRequest) {
+    public void deleteBoard(Long id, HttpServletRequest httpServletRequest) throws AccessDeniedException {
         String token = jwtUtil.resolveToken(httpServletRequest);
 
         if (jwtUtil.validateToken(token) == false) {
@@ -104,6 +108,10 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND)
         );
+
+        if (user.getRole() != UserRoleEnum.ADMIN && board.getUser() != user) {
+            throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED);
+        }
 
         boardRepository.delete(board);
     }

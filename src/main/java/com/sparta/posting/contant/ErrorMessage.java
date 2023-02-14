@@ -5,7 +5,7 @@ public class ErrorMessage {
     public static final String BOARD_NOT_FOUND = "해당 게시글이 존재하지 않습니다.";
     public static final String COMMENT_NOT_FOUND = "해당 댓글이 존재하지 않습니다.";
 
-    public static final String AUTHORIZATION = "권한이 없습니다.";
+    public static final String ACCESS_DENIED = "권한이 없습니다.";
 
     public static final String USERNAME_DUPLICATION = "username이 중복됐습니다.";
     public static final String WRONG_USERNAME = "username이 일치하지 않습니다.";

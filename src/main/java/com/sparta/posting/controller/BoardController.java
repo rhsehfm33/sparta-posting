@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -38,7 +39,7 @@ public class BoardController {
             @PathVariable Long boardId,
             @RequestBody @Valid BoardRequestDto requestDto,
             HttpServletRequest httpServletRequest
-    ) {
+    ) throws AccessDeniedException {
         return boardService.update(boardId, requestDto, httpServletRequest);
     }
 
@@ -47,7 +48,7 @@ public class BoardController {
     public void deleteBoard(
             @PathVariable Long boardId,
             HttpServletRequest httpServletRequest
-    ) {
+    ) throws AccessDeniedException {
         boardService.deleteBoard(boardId, httpServletRequest);
     }
 }

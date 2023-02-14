@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
+import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -56,6 +57,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleJwtException(IllegalArgumentException e) {
         log.error(e.toString() + " occurred: {}", e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(ErrorType.ILLEGAL_ARGUMENT_EXCEPTION, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleJwtException(AccessDeniedException e) {
+        log.error(e.toString() + " occurred: {}", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.ACCESS_DENIED_EXCEPTION, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 }
