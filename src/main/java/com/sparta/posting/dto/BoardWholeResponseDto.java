@@ -25,10 +25,12 @@ public class BoardWholeResponseDto {
         this.category = board.getCategory();
         this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
-        this.modifiedAt = board.getModifiedAt();
+        this.modifiedAt = LocalDateTime.now();
         this.user = new UserOuterResponseDto(board.getUser());
-        this.commentList = board.getCommentList().stream()
-                .map(comment -> new CommentOuterResponseDto(comment))
-                .collect(Collectors.toList());
+        if (board.getCommentList() != null) {
+            this.commentList = board.getCommentList().stream()
+                    .map(comment -> new CommentOuterResponseDto(comment))
+                    .collect(Collectors.toList());
+        }
     }
 }

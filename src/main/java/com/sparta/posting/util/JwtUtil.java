@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
@@ -72,8 +73,10 @@ public class JwtUtil {
             log.info("Expired JWT token, 만료된 JWT token 입니다.");
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-        } catch (IllegalArgumentException e) {
+        } catch (EntityNotFoundException e) {
             log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        } catch (NullPointerException e) {
+            log.info("token 값이 비어있습니다.");
         }
         return false;
     }

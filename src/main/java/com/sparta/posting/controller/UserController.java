@@ -2,14 +2,13 @@ package com.sparta.posting.controller;
 
 import com.sparta.posting.dto.LoginRequestDto;
 import com.sparta.posting.dto.SignupRequestDto;
+import com.sparta.posting.dto.UserOuterResponseDto;
 import com.sparta.posting.service.UserService;
-import com.sparta.posting.dto.ApiResponse;
+import com.sparta.posting.dto.ApiResponseData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -22,13 +21,15 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/signup")
-    public ApiResponse signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
-        return userService.signup(signupRequestDto);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+        userService.signup(signupRequestDto);
     }
 
     @ResponseBody
     @PostMapping("/login")
-    public ApiResponse login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserOuterResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return userService.login(loginRequestDto, response);
     }
 }

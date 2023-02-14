@@ -1,20 +1,22 @@
 package com.sparta.posting.service;
 
+import com.sparta.posting.contant.ErrorMessage;
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardWholeResponseDto;
 import com.sparta.posting.entity.Board;
 import com.sparta.posting.entity.User;
-import com.sparta.posting.enums.ErrorMessage;
+import com.sparta.posting.enums.ErrorType;
 import com.sparta.posting.repository.BoardRepository;
 import com.sparta.posting.repository.UserRepository;
-import com.sparta.posting.dto.ApiResponse;
+import com.sparta.posting.dto.ApiResponseData;
 import com.sparta.posting.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,10 +29,11 @@ public class BoardService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public ApiResponse<BoardWholeResponseDto> createBoard(BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
+    public BoardWholeResponseDto createBoard(BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
         String token = jwtUtil.resolveToken(httpServletRequest);
-        if (token == null || jwtUtil.validateToken(token) == false) {
-            return new ApiResponse(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
+
+        if (jwtUtil.validateToken(token) == false) {
+            throw new JwtException(ErrorMessage.WRONG_JWT_TOKEN);
         }
 
         // 토큰에서 사용자 정보 가져오기
@@ -38,30 +41,31 @@ public class BoardService {
 
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND)
         );
 
         Board newBoard = new Board(boardRequestDto, user);
         boardRepository.save(newBoard);
 
-        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.CREATED, new BoardWholeResponseDto(newBoard));
+        return new BoardWholeResponseDto(newBoard);
     }
 
     @Transactional
-    public ApiResponse<List<BoardWholeResponseDto>> getBoards() {
+    public List<BoardWholeResponseDto> getBoards() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         List<BoardWholeResponseDto> boardResponseDtoList = boardList.stream()
                 .map(board -> new BoardWholeResponseDto(board))
                 .collect(Collectors.toList());
 
-        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK, boardResponseDtoList);
+        return boardResponseDtoList;
     }
 
     @Transactional
-    public ApiResponse update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
+    public BoardWholeResponseDto update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
         String token = jwtUtil.resolveToken(httpServletRequest);
-        if (token == null || jwtUtil.validateToken(token) == false) {
-            return new ApiResponse(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
+
+        if (jwtUtil.validateToken(token) == false) {
+            throw new JwtException(ErrorMessage.WRONG_JWT_TOKEN);
         }
 
         // 토큰에서 사용자 정보 가져오기
@@ -69,23 +73,24 @@ public class BoardService {
 
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND)
         );
 
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND)
         );
 
         board.update(boardRequestDto, user);
 
-        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK, new BoardWholeResponseDto(board));
+        return new BoardWholeResponseDto(board);
     }
 
     @Transactional
-    public ApiResponse deleteBoard(Long id, HttpServletRequest httpServletRequest) {
+    public void deleteBoard(Long id, HttpServletRequest httpServletRequest) {
         String token = jwtUtil.resolveToken(httpServletRequest);
-        if (token == null || jwtUtil.validateToken(token) == false) {
-            return new ApiResponse(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
+
+        if (jwtUtil.validateToken(token) == false) {
+            throw new JwtException(ErrorMessage.WRONG_JWT_TOKEN);
         }
 
         // 토큰에서 사용자 정보 가져오기
@@ -93,15 +98,13 @@ public class BoardService {
 
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND)
         );
 
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND)
         );
 
         boardRepository.delete(board);
-
-        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK);
     }
 }
