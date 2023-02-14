@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 public class BoardWholeResponseDto {
     private UserOuterResponseDto user;
     private Category category;
-    private String contents;
+    private String boardContent;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     public BoardWholeResponseDto(Board board) {
         this.user = new UserOuterResponseDto(board.getUser());
         this.category = board.getCategory();
-        this.contents = board.getContents();
+        this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
     }

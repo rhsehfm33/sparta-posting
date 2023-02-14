@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 @Setter
 public class BoardOuterResponseDto {
     private Category category;
-    private String contents;
+    private String boardContent;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     public BoardOuterResponseDto(Board board) {
         this.category = board.getCategory();
-        this.contents = board.getContents();
+        this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
     }

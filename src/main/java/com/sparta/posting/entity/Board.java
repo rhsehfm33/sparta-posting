@@ -19,7 +19,7 @@ public class Board extends Timestamped {
     private Category category;
 
     @Column(nullable = false)
-    private String contents;
+    private String boardContent;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -28,12 +28,12 @@ public class Board extends Timestamped {
     public Board(BoardRequestDto boardRequestDto, User user) {
         this.user = user;
         this.category = boardRequestDto.getCategory();
-        this.contents = boardRequestDto.getContents();
+        this.boardContent = boardRequestDto.getContents();
     }
 
     public void update(BoardRequestDto boardRequestDto, User user) {
         this.user = user;
         this.category = boardRequestDto.getCategory();
-        this.contents = boardRequestDto.getContents();
+        this.boardContent = boardRequestDto.getContents();
     }
 }
