@@ -1,7 +1,7 @@
 package com.sparta.posting.controller;
 
 import com.sparta.posting.dto.BoardRequestDto;
-import com.sparta.posting.dto.BoardResponseDto;
+import com.sparta.posting.dto.BoardWholeResponseDto;
 import com.sparta.posting.service.BoardService;
 import com.sparta.posting.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/api/boards")
-    public ApiResponse<BoardResponseDto> createBoard(
+    public ApiResponse<BoardWholeResponseDto> createBoard(
             @RequestBody BoardRequestDto requestDto,
             HttpServletRequest httpServletRequest
     ) {
@@ -24,7 +24,7 @@ public class BoardController {
     }
 
     @GetMapping("/api/boards")
-    public ApiResponse<List<BoardResponseDto>> getBoards() {
+    public ApiResponse<List<BoardWholeResponseDto>> getBoards() {
         return boardService.getBoards();
     }
 

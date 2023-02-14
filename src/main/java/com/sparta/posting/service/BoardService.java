@@ -1,7 +1,7 @@
 package com.sparta.posting.service;
 
 import com.sparta.posting.dto.BoardRequestDto;
-import com.sparta.posting.dto.BoardResponseDto;
+import com.sparta.posting.dto.BoardWholeResponseDto;
 import com.sparta.posting.entity.Board;
 import com.sparta.posting.entity.User;
 import com.sparta.posting.enums.ErrorMessage;
@@ -27,7 +27,7 @@ public class BoardService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public ApiResponse<BoardResponseDto> createBoard(BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
+    public ApiResponse<BoardWholeResponseDto> createBoard(BoardRequestDto boardRequestDto, HttpServletRequest httpServletRequest) {
         String token = jwtUtil.resolveToken(httpServletRequest);
         if (token == null || jwtUtil.validateToken(token) == false) {
             return new ApiResponse(ErrorMessage.ERROR_TOKEN_INVALID, HttpStatus.PROXY_AUTHENTICATION_REQUIRED);
@@ -44,14 +44,14 @@ public class BoardService {
         Board newBoard = new Board(boardRequestDto, user);
         boardRepository.save(newBoard);
 
-        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.CREATED, new BoardResponseDto(newBoard));
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.CREATED, new BoardWholeResponseDto(newBoard));
     }
 
     @Transactional
-    public ApiResponse<List<BoardResponseDto>> getBoards() {
+    public ApiResponse<List<BoardWholeResponseDto>> getBoards() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
-        List<BoardResponseDto> boardResponseDtoList = boardList.stream()
-                .map(board -> new BoardResponseDto(board))
+        List<BoardWholeResponseDto> boardResponseDtoList = boardList.stream()
+                .map(board -> new BoardWholeResponseDto(board))
                 .collect(Collectors.toList());
 
         return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK, boardResponseDtoList);
@@ -78,7 +78,7 @@ public class BoardService {
 
         board.update(boardRequestDto, user);
 
-        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK, new BoardResponseDto(board));
+        return new ApiResponse(ErrorMessage.ERROR_NONE, HttpStatus.OK, new BoardWholeResponseDto(board));
     }
 
     @Transactional

@@ -9,15 +9,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class BoardResponseDto {
-    private String username;
+public class BoardOuterResponseDto {
     private Category category;
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public BoardResponseDto(Board board) {
-        this.username = board.getUser().getUsername();
+    public BoardOuterResponseDto(Board board) {
         this.category = board.getCategory();
         this.contents = board.getContents();
         this.createdAt = board.getCreatedAt();
