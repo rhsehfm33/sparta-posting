@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class User extends Timestamped {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
