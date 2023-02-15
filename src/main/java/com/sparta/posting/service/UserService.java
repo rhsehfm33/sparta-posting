@@ -1,10 +1,10 @@
 package com.sparta.posting.service;
 
-import com.sparta.posting.contant.ErrorMessage;
 import com.sparta.posting.dto.LoginRequestDto;
 import com.sparta.posting.dto.SignupRequestDto;
 import com.sparta.posting.dto.UserOuterResponseDto;
 import com.sparta.posting.entity.User;
+import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
 import com.sparta.posting.util.JwtUtil;
 import com.sparta.posting.repository.UserRepository;
@@ -28,13 +28,13 @@ public class UserService {
         // username 중복 확인
         Optional<User> found = userRepository.findByUsername(signupRequestDto.getUsername());
         if (found.isPresent()) {
-            throw new IllegalArgumentException(ErrorMessage.USERNAME_DUPLICATION);
+            throw new IllegalArgumentException(ErrorMessage.USERNAME_DUPLICATION.getMessage());
         }
 
         // 사용자 ROLE 확인
         if (signupRequestDto.getUserRoleEnum().equals(UserRoleEnum.ADMIN)) {
             if (signupRequestDto.getAdminToken() == null && !signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-                throw new EntityNotFoundException(ErrorMessage.WRONG_ADMIN_PASSWORD);
+                throw new EntityNotFoundException(ErrorMessage.WRONG_ADMIN_PASSWORD.getMessage());
             }
         }
 
@@ -46,12 +46,12 @@ public class UserService {
     public UserOuterResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         // 사용자 확인
         User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(
-                () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME)
+                () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
         // 비밀번호 확인
         if(!user.getPassword().equals(loginRequestDto.getPassword())){
-            throw  new EntityNotFoundException(ErrorMessage.WRONG_PASSWORD);
+            throw  new EntityNotFoundException(ErrorMessage.WRONG_PASSWORD.getMessage());
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
