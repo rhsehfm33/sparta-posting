@@ -1,4 +1,6 @@
-<iframe
-  src="./swagger/index.html"
-  style="width:100%; height:600px;"
-></iframe>
+### REST-API url
+https://rhsehfm33.github.io/sparta-posting/
+
+
+### ERD
+![ERD](./sparta-posting-ERD.png)
