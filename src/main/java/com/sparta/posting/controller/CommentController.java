@@ -2,9 +2,11 @@ package com.sparta.posting.controller;
 
 import com.sparta.posting.dto.CommentOuterResponseDto;
 import com.sparta.posting.dto.CommentRequestDto;
+import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +23,9 @@ public class CommentController {
     @ResponseStatus(HttpStatus.CREATED)
     public CommentOuterResponseDto createComment(
             @RequestBody @Valid CommentRequestDto commentRequestDto,
-            HttpServletRequest httpServletRequest
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-       return commentService.createComment(commentRequestDto, httpServletRequest);
+       return commentService.createComment(commentRequestDto, userDetails);
     }
 
     @PutMapping("/{commentId}")
@@ -31,17 +33,17 @@ public class CommentController {
     public CommentOuterResponseDto updateComment(
             @PathVariable Long commentId,
             @RequestBody @Valid CommentRequestDto commentRequestDto,
-            HttpServletRequest httpServletRequest
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
-        return commentService.updateComment(commentId, commentRequestDto, httpServletRequest);
+        return commentService.updateComment(commentId, commentRequestDto, userDetails);
     }
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteComment(
             @PathVariable Long commentId,
-            HttpServletRequest httpServletRequest
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
-        commentService.deleteComment(commentId, httpServletRequest);
+        commentService.deleteComment(commentId, userDetails);
     }
 }

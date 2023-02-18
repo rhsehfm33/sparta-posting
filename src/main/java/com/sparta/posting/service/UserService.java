@@ -6,7 +6,7 @@ import com.sparta.posting.dto.UserOuterResponseDto;
 import com.sparta.posting.entity.User;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
-import com.sparta.posting.util.JwtUtil;
+import com.sparta.posting.jwt.JwtUtil;
 import com.sparta.posting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public class UserService {
         );
 
         // 비밀번호 확인
-        if(!user.getPassword().equals(loginRequestDto.getPassword())){
+        if (!user.getPassword().equals(loginRequestDto.getPassword())){
             throw  new EntityNotFoundException(ErrorMessage.WRONG_PASSWORD.getMessage());
         }
 

@@ -2,9 +2,11 @@ package com.sparta.posting.controller;
 
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardWholeResponseDto;
+import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +24,9 @@ public class BoardController {
     @ResponseStatus(HttpStatus.CREATED)
     public BoardWholeResponseDto createBoard(
             @RequestBody @Valid BoardRequestDto requestDto,
-            HttpServletRequest httpServletRequest
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return boardService.createBoard(requestDto, httpServletRequest);
+        return boardService.createBoard(requestDto, userDetails);
     }
 
     @GetMapping
@@ -38,17 +40,17 @@ public class BoardController {
     public BoardWholeResponseDto updateBoard(
             @PathVariable Long boardId,
             @RequestBody @Valid BoardRequestDto requestDto,
-            HttpServletRequest httpServletRequest
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
-        return boardService.update(boardId, requestDto, httpServletRequest);
+        return boardService.update(boardId, requestDto, userDetails);
     }
 
     @DeleteMapping("/{boardId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteBoard(
             @PathVariable Long boardId,
-            HttpServletRequest httpServletRequest
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
-        boardService.deleteBoard(boardId, httpServletRequest);
+        boardService.deleteBoard(boardId, userDetails);
     }
 }
