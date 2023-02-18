@@ -22,7 +22,7 @@ public class CommentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CommentOuterResponseDto createComment(
-            @RequestBody @Valid CommentRequestDto commentRequestDto,
+            @Valid CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
        return commentService.createComment(commentRequestDto, userDetails);
@@ -32,7 +32,7 @@ public class CommentController {
     @ResponseStatus(HttpStatus.OK)
     public CommentOuterResponseDto updateComment(
             @PathVariable Long commentId,
-            @RequestBody @Valid CommentRequestDto commentRequestDto,
+            @Valid CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
         return commentService.updateComment(commentId, commentRequestDto, userDetails);

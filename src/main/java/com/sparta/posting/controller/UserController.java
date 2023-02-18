@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
@@ -22,14 +22,14 @@ public class UserController {
     @ResponseBody
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+    public void signup(@Valid SignupRequestDto signupRequestDto) {
         userService.signup(signupRequestDto);
     }
 
     @ResponseBody
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public UserOuterResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public UserOuterResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return userService.login(loginRequestDto, response);
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,7 +28,7 @@ public class Board extends Timestamped {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     @OrderBy("createdAt DESC")
-    List<Comment> commentList;
+    private List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, User user) {
         this.user = user;

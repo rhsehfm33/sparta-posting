@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,10 +30,10 @@ public class User extends Timestamped {
     private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    List<Board> boardList;
+    private List<Board> boardList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    List<Comment> commentList;
+    private List<Comment> commentList = new ArrayList<>();
 
     public User(SignupRequestDto signupRequestDto) {
         this.username = signupRequestDto.getUsername();

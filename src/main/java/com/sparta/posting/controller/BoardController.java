@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -23,7 +22,7 @@ public class BoardController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BoardWholeResponseDto createBoard(
-            @RequestBody @Valid BoardRequestDto requestDto,
+            @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return boardService.createBoard(requestDto, userDetails);
@@ -39,7 +38,7 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     public BoardWholeResponseDto updateBoard(
             @PathVariable Long boardId,
-            @RequestBody @Valid BoardRequestDto requestDto,
+            @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
         return boardService.update(boardId, requestDto, userDetails);
