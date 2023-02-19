@@ -5,6 +5,7 @@ public enum ErrorMessage {
     BOARD_NOT_FOUND("해당 게시글이 존재하지 않습니다."),
     COMMENT_NOT_FOUND("해당 댓글이 존재하지 않습니다."),
 
+    AUTHENTICATION_FAILED("JWT가 올바르지 않습니다"),
     ACCESS_DENIED("권한이 없습니다."),
 
     USERNAME_DUPLICATION("username이 중복됐습니다."),

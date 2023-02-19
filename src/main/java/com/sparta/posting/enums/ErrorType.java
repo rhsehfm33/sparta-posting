@@ -12,7 +12,8 @@ public enum ErrorType {
     VALIDATION_EXCEPTION("validation fail error"),
     JWT_EXCEPTION("token invalid error"),
     ILLEGAL_ARGUMENT_EXCEPTION("wrong argument error"),
-    ACCESS_DENIED_EXCEPTION("don't have authority to do so");
+    ACCESS_DENIED_EXCEPTION("don't have authority to do so"),
+    AUTHENTICATION_EXCEPTION("authentication has failed");
 
     String description;
 

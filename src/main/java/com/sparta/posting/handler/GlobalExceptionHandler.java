@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -54,14 +55,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> handleJwtException(IllegalArgumentException e) {
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error(e.toString() + " occurred: {}", e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(ErrorType.ILLEGAL_ARGUMENT_EXCEPTION, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<?> handleJwtException(AccessDeniedException e) {
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e) {
+        log.error(e.toString() + " occurred: {}", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.ACCESS_DENIED_EXCEPTION, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handleAuthenticationException(AuthenticationException e) {
         log.error(e.toString() + " occurred: {}", e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(ErrorType.ACCESS_DENIED_EXCEPTION, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);

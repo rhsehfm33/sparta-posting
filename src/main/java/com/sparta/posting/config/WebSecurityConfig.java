@@ -3,6 +3,8 @@ package com.sparta.posting.config;
 
 import com.sparta.posting.jwt.JwtAuthFilter;
 import com.sparta.posting.jwt.JwtUtil;
+import com.sparta.posting.security.CustomAccessDeniedHandler;
+import com.sparta.posting.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
 @EnableGlobalMethodSecurity(securedEnabled = true) // @Secured 어노테이션 활성화
 public class WebSecurityConfig {
-
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -55,7 +58,12 @@ public class WebSecurityConfig {
 
         // http.formLogin().loginPage("/api/user/login-page").permitAll();
 
-        // http.exceptionHandling().accessDeniedPage("/api/user/forbidden");
+        // 401 Error 처리, authentication 즉, 인증과정에서 실패할 시 처리
+        http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
+
+        // 403 Error 처리, 인증과는 별개로 추가적인 권한이 충족되지 않는 경우
+        http.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+
 
         return http.build();
     }
