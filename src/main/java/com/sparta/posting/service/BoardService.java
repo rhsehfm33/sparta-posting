@@ -1,5 +1,6 @@
 package com.sparta.posting.service;
 
+import com.sparta.posting.dto.ApiResponseDto;
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardWholeResponseDto;
 import com.sparta.posting.entity.*;
@@ -9,7 +10,10 @@ import com.sparta.posting.repository.BoardLikeRepository;
 import com.sparta.posting.repository.BoardRepository;
 import com.sparta.posting.repository.UserRepository;
 import com.sparta.posting.security.UserDetailsImpl;
+import com.sparta.posting.util.ResponseEntityConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +31,7 @@ public class BoardService {
     private final BoardLikeRepository boardLikeRepository;
 
     @Transactional
-    public BoardWholeResponseDto createBoard(BoardRequestDto boardRequestDto, UserDetails userDetails) {
+    public ResponseEntity<?> createBoard(BoardRequestDto boardRequestDto, UserDetails userDetails) {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
@@ -36,21 +40,21 @@ public class BoardService {
         Board newBoard = new Board(boardRequestDto, user);
         boardRepository.save(newBoard);
 
-        return new BoardWholeResponseDto(newBoard);
+        return ResponseEntityConverter.convert(HttpStatus.CREATED, new BoardWholeResponseDto(newBoard));
     }
 
     @Transactional
-    public List<BoardWholeResponseDto> getBoards() {
+    public ResponseEntity<?> getBoards() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         List<BoardWholeResponseDto> boardResponseDtoList = boardList.stream()
                 .map(board -> new BoardWholeResponseDto(board))
                 .collect(Collectors.toList());
 
-        return boardResponseDtoList;
+        return ResponseEntityConverter.convert(HttpStatus.OK, boardResponseDtoList);
     }
 
     @Transactional
-    public BoardWholeResponseDto update(
+    public ResponseEntity<?> update(
             Long id,
             BoardRequestDto boardRequestDto,
             UserDetails userDetails
@@ -70,11 +74,11 @@ public class BoardService {
 
         board.update(boardRequestDto, user);
 
-        return new BoardWholeResponseDto(board);
+        return ResponseEntityConverter.convert(HttpStatus.OK, new BoardWholeResponseDto(board));
     }
 
     @Transactional
-    public void deleteBoard(
+    public ResponseEntity<?> deleteBoard(
             Long id,
             UserDetails userDetails
     ) throws AccessDeniedException {
@@ -92,10 +96,11 @@ public class BoardService {
         }
 
         boardRepository.delete(board);
+        return ResponseEntityConverter.convert(HttpStatus.OK, null);
     }
 
     @Transactional
-    public void toggleBoardLike(Long boardId, UserDetailsImpl userDetails) throws AccessDeniedException {
+    public ResponseEntity<?> toggleBoardLike(Long boardId, UserDetailsImpl userDetails) throws AccessDeniedException {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
@@ -115,5 +120,7 @@ public class BoardService {
         else {
             boardLikeRepository.delete(boardLike);
         }
+
+        return ResponseEntityConverter.convert(HttpStatus.OK, null);
     }
 }

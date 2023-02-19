@@ -1,17 +1,18 @@
 package com.sparta.posting.controller;
 
+import com.sparta.posting.dto.ApiResponseDto;
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardWholeResponseDto;
 import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +21,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public BoardWholeResponseDto createBoard(
+    public ResponseEntity<?> createBoard(
             @RequestBody @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -29,14 +29,12 @@ public class BoardController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<BoardWholeResponseDto> getBoards() {
+    public ResponseEntity<?> getBoards() {
         return boardService.getBoards();
     }
 
     @PutMapping("/{boardId}")
-    @ResponseStatus(HttpStatus.OK)
-    public BoardWholeResponseDto updateBoard(
+    public ResponseEntity<?> updateBoard(
             @PathVariable Long boardId,
             @RequestBody @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -45,20 +43,18 @@ public class BoardController {
     }
 
     @DeleteMapping("/{boardId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteBoard(
+    public ResponseEntity<?> deleteBoard(
             @PathVariable Long boardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
-        boardService.deleteBoard(boardId, userDetails);
+        return boardService.deleteBoard(boardId, userDetails);
     }
 
     @PostMapping("/like/{boardId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void toggleLikeBoard(
+    public ResponseEntity<?> toggleLikeBoard(
             @PathVariable Long boardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
-        boardService.toggleBoardLike(boardId, userDetails);
+        return boardService.toggleBoardLike(boardId, userDetails);
     }
 }

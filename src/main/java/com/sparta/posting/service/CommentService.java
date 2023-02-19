@@ -13,7 +13,10 @@ import com.sparta.posting.repository.CommentLikeRepository;
 import com.sparta.posting.repository.CommentRepository;
 import com.sparta.posting.repository.UserRepository;
 import com.sparta.posting.security.UserDetailsImpl;
+import com.sparta.posting.util.ResponseEntityConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +33,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
-    public CommentOuterResponseDto createComment(
+    public ResponseEntity<?> createComment(
             CommentRequestDto commentRequestDto,
             UserDetailsImpl userDetailsImpl
     ) {
@@ -53,11 +56,11 @@ public class CommentService {
         Comment newComment = new Comment(commentRequestDto, user, board, parentComment);
         commentRepository.save(newComment);
 
-        return new CommentOuterResponseDto(newComment);
+        return ResponseEntityConverter.convert(HttpStatus.CREATED, new CommentOuterResponseDto(newComment));
     }
 
     @Transactional
-    public CommentOuterResponseDto updateComment(
+    public ResponseEntity<?> updateComment(
             Long commentId,
             CommentRequestDto commentRequestDto,
             UserDetailsImpl userDetailsImpl
@@ -77,11 +80,11 @@ public class CommentService {
 
         comment.update(commentRequestDto, user);
 
-        return new CommentOuterResponseDto(comment);
+        return ResponseEntityConverter.convert(HttpStatus.OK, new CommentOuterResponseDto(comment));
     }
 
     @Transactional
-    public void deleteComment(Long commentId, UserDetails userDetails) throws AccessDeniedException {
+    public ResponseEntity<?> deleteComment(Long commentId, UserDetails userDetails) throws AccessDeniedException {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
@@ -96,10 +99,12 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
+
+        return ResponseEntityConverter.convert(HttpStatus.OK, null);
     }
 
     @Transactional
-    public void toggleCommentLike(Long commentId, UserDetailsImpl userDetails) throws AccessDeniedException {
+    public ResponseEntity<?> toggleCommentLike(Long commentId, UserDetailsImpl userDetails) throws AccessDeniedException {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
@@ -119,5 +124,7 @@ public class CommentService {
         else {
             commentLikeRepository.delete(commentLike);
         }
+
+        return ResponseEntityConverter.convert(HttpStatus.OK, null);
     }
 }

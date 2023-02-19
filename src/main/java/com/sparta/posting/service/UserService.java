@@ -8,7 +8,10 @@ import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
 import com.sparta.posting.jwt.JwtUtil;
 import com.sparta.posting.repository.UserRepository;
+import com.sparta.posting.util.ResponseEntityConverter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +27,7 @@ public class UserService {
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public void signup(SignupRequestDto signupRequestDto) {
+    public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) {
         // username 중복 확인
         Optional<User> found = userRepository.findByUsername(signupRequestDto.getUsername());
         if (found.isPresent()) {
@@ -40,10 +43,12 @@ public class UserService {
 
         User newUser = new User(signupRequestDto);
         userRepository.save(newUser);
+
+        return ResponseEntityConverter.convert(HttpStatus.CREATED, new UserOuterResponseDto(newUser));
     }
 
     @Transactional(readOnly = true)
-    public UserOuterResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<?> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         // 사용자 확인
         User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
@@ -55,6 +60,6 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
-        return new UserOuterResponseDto(user);
+        return ResponseEntityConverter.convert(HttpStatus.OK, new UserOuterResponseDto(user));
     }
 }
