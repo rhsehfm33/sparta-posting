@@ -1,13 +1,14 @@
 package com.sparta.posting.dto;
 
 import com.sparta.posting.entity.Board;
+import com.sparta.posting.entity.Comment;
 import com.sparta.posting.enums.Category;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class BoardWholeResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private UserOuterResponseDto user;
-    private List<CommentOuterResponseDto> commentList;
+    private List<CommentReplyResponseDto> commentList = new ArrayList<>();
     private long likes;
 
     public BoardWholeResponseDto(Board board) {
@@ -28,10 +29,12 @@ public class BoardWholeResponseDto {
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = LocalDateTime.now();
         this.user = new UserOuterResponseDto(board.getUser());
-        if (board.getCommentList() != null) {
-            this.commentList = board.getCommentList().stream()
-                    .map(comment -> new CommentOuterResponseDto(comment))
-                    .collect(Collectors.toList());
+        if (board.getCommentList().size() > 0) {
+            for (Comment comment : board.getCommentList()) {
+                if (comment.getParent() == null) {
+                    this.commentList.add(new CommentReplyResponseDto(comment));
+                }
+            }
         }
         this.likes = board.getBoardLikeList().size();
     }

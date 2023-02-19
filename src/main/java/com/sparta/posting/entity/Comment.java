@@ -1,5 +1,6 @@
 package com.sparta.posting.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.posting.dto.CommentRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
