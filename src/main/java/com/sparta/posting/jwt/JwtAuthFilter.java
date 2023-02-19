@@ -27,13 +27,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = jwtUtil.resolveToken(request);
 
-        if (jwtUtil.validateToken(token) == false) {
-            jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
-            return;
+        if (jwtUtil.validateToken(token) == true) {
+            Claims info = jwtUtil.getUserInfoFromToken(token);
+            setAuthentication(info.getSubject());
         }
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-        setAuthentication(info.getSubject());
         filterChain.doFilter(request, response);
+//        jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
+//        return;
     }
 
     public void setAuthentication(String username) {

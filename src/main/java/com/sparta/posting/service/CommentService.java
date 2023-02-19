@@ -4,23 +4,21 @@ import com.sparta.posting.dto.CommentOuterResponseDto;
 import com.sparta.posting.dto.CommentRequestDto;
 import com.sparta.posting.entity.Board;
 import com.sparta.posting.entity.Comment;
+import com.sparta.posting.entity.CommentLike;
 import com.sparta.posting.entity.User;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
-import com.sparta.posting.jwt.JwtUtil;
 import com.sparta.posting.repository.BoardRepository;
+import com.sparta.posting.repository.CommentLikeRepository;
 import com.sparta.posting.repository.CommentRepository;
 import com.sparta.posting.repository.UserRepository;
 import com.sparta.posting.security.UserDetailsImpl;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
 import java.nio.file.AccessDeniedException;
 
 @Service
@@ -29,7 +27,7 @@ public class CommentService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    private final JwtUtil jwtUtil;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     public CommentOuterResponseDto createComment(
@@ -45,9 +43,15 @@ public class CommentService {
                 () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND.getMessage())
         );
 
-        Comment newComment = new Comment(commentRequestDto, user, board);
-        commentRepository.save(newComment);
+        Comment parentComment = null;
+        if (commentRequestDto.getParentCommentId() != null) {
+            parentComment = commentRepository.findById(commentRequestDto.getParentCommentId()).orElseThrow(
+                    () -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+            );
+        }
 
+        Comment newComment = new Comment(commentRequestDto, user, board, parentComment);
+        commentRepository.save(newComment);
 
         return new CommentOuterResponseDto(newComment);
     }
@@ -92,5 +96,28 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
+    }
+
+    @Transactional
+    public void toggleCommentLike(Long commentId, UserDetailsImpl userDetails) throws AccessDeniedException {
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
+        );
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+        );
+
+        if (user.getRole() != UserRoleEnum.ADMIN && comment.getUser() != user) {
+            throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED.getMessage());
+        }
+
+        CommentLike commentLike = commentLikeRepository.findByUserAndComment(user, comment).orElse(null);
+        if (commentLike == null) {
+            commentLikeRepository.save(new CommentLike(user, comment));
+        }
+        else {
+            commentLikeRepository.delete(commentLike);
+        }
     }
 }

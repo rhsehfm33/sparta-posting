@@ -30,6 +30,9 @@ public class Board extends Timestamped {
     @OrderBy("createdAt DESC")
     private List<Comment> commentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<BoardLike> boardLikeList = new ArrayList<>();
+
     public Board(BoardRequestDto boardRequestDto, User user) {
         this.user = user;
         this.category = boardRequestDto.getCategory();

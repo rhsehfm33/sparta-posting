@@ -22,7 +22,7 @@ public class BoardController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BoardWholeResponseDto createBoard(
-            @Valid BoardRequestDto requestDto,
+            @RequestBody @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return boardService.createBoard(requestDto, userDetails);
@@ -38,7 +38,7 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     public BoardWholeResponseDto updateBoard(
             @PathVariable Long boardId,
-            @Valid BoardRequestDto requestDto,
+            @RequestBody @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
         return boardService.update(boardId, requestDto, userDetails);
@@ -51,5 +51,14 @@ public class BoardController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
         boardService.deleteBoard(boardId, userDetails);
+    }
+
+    @PostMapping("/like/{boardId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void toggleLikeBoard(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws AccessDeniedException {
+        boardService.toggleBoardLike(boardId, userDetails);
     }
 }

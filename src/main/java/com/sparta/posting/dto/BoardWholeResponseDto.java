@@ -12,13 +12,14 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class BoardWholeResponseDto {
-    private Long id;
+    private long id;
     private Category category;
     private String boardContent;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private UserOuterResponseDto user;
     private List<CommentOuterResponseDto> commentList;
+    private long likes;
 
     public BoardWholeResponseDto(Board board) {
         this.id = board.getId();
@@ -32,5 +33,6 @@ public class BoardWholeResponseDto {
                     .map(comment -> new CommentOuterResponseDto(comment))
                     .collect(Collectors.toList());
         }
+        this.likes = board.getBoardLikeList().size();
     }
 }

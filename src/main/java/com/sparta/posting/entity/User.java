@@ -35,6 +35,12 @@ public class User extends Timestamped {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<BoardLike> likedBoardSet = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CommentLike> likedCommentList = new ArrayList<>();
+
     public User(SignupRequestDto signupRequestDto) {
         this.username = signupRequestDto.getUsername();
         this.password = signupRequestDto.getPassword();

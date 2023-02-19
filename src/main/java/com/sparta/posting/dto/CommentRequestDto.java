@@ -14,4 +14,6 @@ public class CommentRequestDto {
 
     @NotNull
     private Long boardId;
+
+    private Long parentCommentId;
 }

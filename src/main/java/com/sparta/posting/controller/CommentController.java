@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
 
@@ -22,7 +21,7 @@ public class CommentController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CommentOuterResponseDto createComment(
-            @Valid CommentRequestDto commentRequestDto,
+            @RequestBody @Valid CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
        return commentService.createComment(commentRequestDto, userDetails);
@@ -32,7 +31,7 @@ public class CommentController {
     @ResponseStatus(HttpStatus.OK)
     public CommentOuterResponseDto updateComment(
             @PathVariable Long commentId,
-            @Valid CommentRequestDto commentRequestDto,
+            @RequestBody @Valid CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
         return commentService.updateComment(commentId, commentRequestDto, userDetails);
@@ -45,5 +44,14 @@ public class CommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
         commentService.deleteComment(commentId, userDetails);
+    }
+
+    @PostMapping("/like/{commentId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws AccessDeniedException {
+        commentService.toggleCommentLike(commentId, userDetails);
     }
 }

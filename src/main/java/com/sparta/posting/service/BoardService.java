@@ -2,13 +2,13 @@ package com.sparta.posting.service;
 
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardWholeResponseDto;
-import com.sparta.posting.entity.Board;
-import com.sparta.posting.entity.User;
+import com.sparta.posting.entity.*;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
-import com.sparta.posting.jwt.JwtUtil;
+import com.sparta.posting.repository.BoardLikeRepository;
 import com.sparta.posting.repository.BoardRepository;
 import com.sparta.posting.repository.UserRepository;
+import com.sparta.posting.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
+    private final BoardLikeRepository boardLikeRepository;
 
     @Transactional
     public BoardWholeResponseDto createBoard(BoardRequestDto boardRequestDto, UserDetails userDetails) {
@@ -92,5 +92,28 @@ public class BoardService {
         }
 
         boardRepository.delete(board);
+    }
+
+    @Transactional
+    public void toggleBoardLike(Long boardId, UserDetailsImpl userDetails) throws AccessDeniedException {
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
+        );
+
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND.getMessage())
+        );
+
+        if (user.getRole() != UserRoleEnum.ADMIN && board.getUser() != user) {
+            throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED.getMessage());
+        }
+
+        BoardLike boardLike = boardLikeRepository.findByUserAndBoard(user, board).orElse(null);
+        if (boardLike == null) {
+            boardLikeRepository.save(new BoardLike(user, board));
+        }
+        else {
+            boardLikeRepository.delete(boardLike);
+        }
     }
 }
