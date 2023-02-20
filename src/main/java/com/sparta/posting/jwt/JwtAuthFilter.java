@@ -24,7 +24,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         String token = jwtUtil.resolveToken(request);
 
         if (jwtUtil.validateToken(token) == true) {
@@ -32,8 +36,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             setAuthentication(info.getSubject());
         }
         filterChain.doFilter(request, response);
-//        jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
-//        return;
     }
 
     public void setAuthentication(String username) {
@@ -43,16 +45,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.setContext(context);
     }
-
-    public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode) {
-        response.setStatus(statusCode);
-        response.setContentType("application/json");
-        try {
-            String json = new ObjectMapper().writeValueAsString(new SecurityExceptionDto(statusCode, msg));
-            response.getWriter().write(json);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
-
 }
