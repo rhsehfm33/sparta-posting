@@ -15,11 +15,15 @@ public class CommentOuterResponseDto {
     private LocalDateTime modifiedAt;
     private long likes;
 
-    public CommentOuterResponseDto(Comment comment) {
+    CommentOuterResponseDto(Comment comment) {
         this.id = comment.getId();
         this.commentContent = comment.getCommentContent();
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
         this.likes = comment.getLikedCommentList().size();
+    }
+
+    public static CommentOuterResponseDto of(Comment comment) {
+        return new CommentOuterResponseDto(comment);
     }
 }

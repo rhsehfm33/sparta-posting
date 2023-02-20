@@ -1,5 +1,6 @@
 package com.sparta.posting.service;
 
+import com.sparta.posting.dto.ApiResponse;
 import com.sparta.posting.dto.CommentOuterResponseDto;
 import com.sparta.posting.dto.CommentRequestDto;
 import com.sparta.posting.entity.Board;
@@ -33,7 +34,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
-    public ResponseEntity<?> createComment(
+    public ApiResponse<CommentOuterResponseDto> createComment(
             CommentRequestDto commentRequestDto,
             UserDetailsImpl userDetailsImpl
     ) {
@@ -59,11 +60,11 @@ public class CommentService {
         Comment newComment = new Comment(commentRequestDto, user, board, parentComment);
         commentRepository.save(newComment);
 
-        return ResponseEntityConverter.convert(HttpStatus.CREATED, new CommentOuterResponseDto(newComment));
+        return ApiResponse.successOf(HttpStatus.CREATED, CommentOuterResponseDto.of(newComment));
     }
 
     @Transactional
-    public ResponseEntity<?> updateComment(
+    public ApiResponse<CommentOuterResponseDto> updateComment(
             Long commentId,
             CommentRequestDto commentRequestDto,
             UserDetailsImpl userDetailsImpl
@@ -83,11 +84,11 @@ public class CommentService {
 
         comment.update(commentRequestDto, user);
 
-        return ResponseEntityConverter.convert(HttpStatus.OK, new CommentOuterResponseDto(comment));
+        return ApiResponse.successOf(HttpStatus.OK, CommentOuterResponseDto.of(comment));
     }
 
     @Transactional
-    public ResponseEntity<?> deleteComment(Long commentId, UserDetails userDetails) throws AccessDeniedException {
+    public ApiResponse<CommentOuterResponseDto> deleteComment(Long commentId, UserDetails userDetails) throws AccessDeniedException {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
@@ -103,11 +104,11 @@ public class CommentService {
 
         commentRepository.delete(comment);
 
-        return ResponseEntityConverter.convert(HttpStatus.OK, null);
+        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 
     @Transactional
-    public ResponseEntity<?> toggleCommentLike(Long commentId, UserDetailsImpl userDetails) throws AccessDeniedException {
+    public ApiResponse<CommentOuterResponseDto> toggleCommentLike(Long commentId, UserDetailsImpl userDetails) throws AccessDeniedException {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
@@ -128,6 +129,6 @@ public class CommentService {
             commentLikeRepository.delete(commentLike);
         }
 
-        return ResponseEntityConverter.convert(HttpStatus.OK, null);
+        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 }

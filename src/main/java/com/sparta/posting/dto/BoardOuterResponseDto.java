@@ -17,12 +17,16 @@ public class BoardOuterResponseDto {
     private LocalDateTime modifiedAt;
     private long likes;
 
-    public BoardOuterResponseDto(Board board) {
+    BoardOuterResponseDto(Board board) {
         this.id = board.getId();
         this.category = board.getCategory();
         this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
         this.likes = board.getBoardLikeList().size();
+    }
+
+    public static BoardOuterResponseDto of(Board board) {
+        return new BoardOuterResponseDto(board);
     }
 }

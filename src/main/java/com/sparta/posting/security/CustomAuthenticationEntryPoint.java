@@ -1,7 +1,8 @@
 package com.sparta.posting.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.posting.dto.ErrorResponse;
+import com.sparta.posting.dto.ApiResponse;
+import com.sparta.posting.dto.ErrorResponseDto;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.ErrorType;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import java.io.OutputStream;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private static final ErrorResponse errorResponse = new ErrorResponse(
+    private static final ErrorResponseDto ERROR_RESPONSE_DTO = new ErrorResponseDto(
             ErrorType.AUTHENTICATION_EXCEPTION,
             ErrorMessage.AUTHENTICATION_FAILED.getMessage()
     );
@@ -32,7 +33,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         try (OutputStream os = response.getOutputStream()) {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.writeValue(os, errorResponse);
+            objectMapper.writeValue(os, ApiResponse.failOf(HttpStatus.UNAUTHORIZED, ERROR_RESPONSE_DTO));
             os.flush();
         }
     }

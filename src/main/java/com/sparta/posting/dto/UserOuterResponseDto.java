@@ -22,4 +22,8 @@ public class UserOuterResponseDto {
         this.createdAt = user.getCreatedAt();
         this.modifiedAt = user.getModifiedAt();
     }
+
+    public static UserOuterResponseDto of(User user) {
+        return new UserOuterResponseDto(user);
+    }
 }

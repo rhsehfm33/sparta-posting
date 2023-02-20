@@ -1,8 +1,6 @@
 package com.sparta.posting.service;
 
-import com.sparta.posting.dto.BoardOuterResponseDto;
-import com.sparta.posting.dto.BoardRequestDto;
-import com.sparta.posting.dto.BoardWholeResponseDto;
+import com.sparta.posting.dto.*;
 import com.sparta.posting.entity.*;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
@@ -31,7 +29,7 @@ public class BoardService {
     private final BoardLikeRepository boardLikeRepository;
 
     @Transactional
-    public ResponseEntity<?> createBoard(BoardRequestDto boardRequestDto, UserDetails userDetails) {
+    public ApiResponse<BoardOuterResponseDto> createBoard(BoardRequestDto boardRequestDto, UserDetails userDetails) {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
@@ -40,21 +38,21 @@ public class BoardService {
         Board newBoard = new Board(boardRequestDto, user);
         boardRepository.save(newBoard);
 
-        return ResponseEntityConverter.convert(HttpStatus.CREATED, new BoardWholeResponseDto(newBoard));
+        return ApiResponse.successOf(HttpStatus.CREATED, BoardOuterResponseDto.of(newBoard));
     }
 
     @Transactional
-    public ResponseEntity<?> getBoards() {
+    public ApiResponse<List<BoardOuterResponseDto>> getBoards() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         List<BoardOuterResponseDto> boardResponseDtoList = boardList.stream()
-                .map(board -> new BoardOuterResponseDto(board))
+                .map(board -> BoardOuterResponseDto.of(board))
                 .collect(Collectors.toList());
 
-        return ResponseEntityConverter.convert(HttpStatus.OK, boardResponseDtoList);
+        return ApiResponse.successOf(HttpStatus.CREATED, boardResponseDtoList);
     }
 
     @Transactional
-    public ResponseEntity<?> update(
+    public ApiResponse<BoardOuterResponseDto> update(
             Long id,
             BoardRequestDto boardRequestDto,
             UserDetails userDetails
@@ -74,11 +72,11 @@ public class BoardService {
 
         board.update(boardRequestDto, user);
 
-        return ResponseEntityConverter.convert(HttpStatus.OK, new BoardWholeResponseDto(board));
+        return ApiResponse.successOf(HttpStatus.OK, BoardOuterResponseDto.of(board));
     }
 
     @Transactional
-    public ResponseEntity<?> deleteBoard(
+    public ApiResponse<BoardOuterResponseDto> deleteBoard(
             Long id,
             UserDetails userDetails
     ) throws AccessDeniedException {
@@ -96,11 +94,11 @@ public class BoardService {
         }
 
         boardRepository.delete(board);
-        return ResponseEntityConverter.convert(HttpStatus.OK, null);
+        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 
     @Transactional
-    public ResponseEntity<?> toggleBoardLike(Long boardId, UserDetailsImpl userDetails) throws AccessDeniedException {
+    public ApiResponse<BoardOuterResponseDto> toggleBoardLike(Long boardId, UserDetailsImpl userDetails) throws AccessDeniedException {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
@@ -121,6 +119,6 @@ public class BoardService {
             boardLikeRepository.delete(boardLike);
         }
 
-        return ResponseEntityConverter.convert(HttpStatus.OK, null);
+        return ApiResponse.successOf(HttpStatus.OK, BoardOuterResponseDto.of(board));
     }
 }
