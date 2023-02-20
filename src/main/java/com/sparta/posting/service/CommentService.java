@@ -48,9 +48,12 @@ public class CommentService {
 
         Comment parentComment = null;
         if (commentRequestDto.getParentCommentId() != null) {
-            parentComment = commentRepository.findById(commentRequestDto.getParentCommentId()).orElseThrow(
-                    () -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
-            );
+            parentComment = commentRepository.findByIdAndBoard_Id(
+                    commentRequestDto.getParentCommentId(),
+                    commentRequestDto.getBoardId())
+                    .orElseThrow(
+                            () -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
+                    );
         }
 
         Comment newComment = new Comment(commentRequestDto, user, board, parentComment);
