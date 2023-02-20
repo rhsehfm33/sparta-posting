@@ -1,6 +1,6 @@
 package com.sparta.posting.service;
 
-import com.sparta.posting.dto.ApiResponseDto;
+import com.sparta.posting.dto.BoardOuterResponseDto;
 import com.sparta.posting.dto.BoardRequestDto;
 import com.sparta.posting.dto.BoardWholeResponseDto;
 import com.sparta.posting.entity.*;
@@ -46,8 +46,8 @@ public class BoardService {
     @Transactional
     public ResponseEntity<?> getBoards() {
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
-        List<BoardWholeResponseDto> boardResponseDtoList = boardList.stream()
-                .map(board -> new BoardWholeResponseDto(board))
+        List<BoardOuterResponseDto> boardResponseDtoList = boardList.stream()
+                .map(board -> new BoardOuterResponseDto(board))
                 .collect(Collectors.toList());
 
         return ResponseEntityConverter.convert(HttpStatus.OK, boardResponseDtoList);

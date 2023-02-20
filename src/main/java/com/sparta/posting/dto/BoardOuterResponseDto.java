@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class BoardOuterResponseDto {
-    private Long id;
+    private long id;
     private Category category;
     private String boardContent;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private long likes;
 
     public BoardOuterResponseDto(Board board) {
         this.id = board.getId();
@@ -22,5 +23,6 @@ public class BoardOuterResponseDto {
         this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
+        this.likes = board.getBoardLikeList().size();
     }
 }
