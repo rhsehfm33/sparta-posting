@@ -25,19 +25,14 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Comment parent;
-
-    @OneToMany(mappedBy = "parent")
-    private List<Comment> replies = new ArrayList<>();
+    @OneToMany(mappedBy = "comment")
+    private List<Reply> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "comment")
     private List<CommentLike> likedCommentList = new ArrayList<>();
 
 
-    public Comment(CommentRequestDto commentRequestDto, User user, Board board, Comment parentComment) {
-        this.parent = parentComment;
+    public Comment(CommentRequestDto commentRequestDto, User user, Board board) {
         this.commentContent = commentRequestDto.getCommentContent();
         this.user = user;
         this.board = board;

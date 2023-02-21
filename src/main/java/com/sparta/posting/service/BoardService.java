@@ -6,6 +6,7 @@ import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
 import com.sparta.posting.repository.BoardLikeRepository;
 import com.sparta.posting.repository.BoardRepository;
+import com.sparta.posting.repository.CommentRepository;
 import com.sparta.posting.repository.UserRepository;
 import com.sparta.posting.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,10 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BoardLikeRepository boardLikeRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
-    public ApiResponse<BoardOuterResponseDto> createBoard(BoardRequestDto boardRequestDto, UserDetails userDetails) {
+    public ApiResponse<BoardOuterResponseDto> createBoard(BoardRequestDto boardRequestDto, UserDetailsImpl userDetails) {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
@@ -62,10 +64,10 @@ public class BoardService {
     public ApiResponse<BoardOuterResponseDto> update(
             Long id,
             BoardRequestDto boardRequestDto,
-            UserDetails userDetails
+            UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByUsername(userDetailsImpl.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
 
@@ -85,10 +87,10 @@ public class BoardService {
     @Transactional
     public ApiResponse<BoardOuterResponseDto> deleteBoard(
             Long id,
-            UserDetails userDetails
+            UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByUsername(userDetailsImpl.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
 
@@ -100,13 +102,16 @@ public class BoardService {
             throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
 
+        commentRepository.deleteAllByBoard_Id(board.getId());
+
         boardRepository.delete(board);
+
         return ApiResponse.successOf(HttpStatus.OK, null);
     }
 
     @Transactional
-    public ApiResponse<BoardOuterResponseDto> toggleBoardLike(Long boardId, UserDetailsImpl userDetails) throws AccessDeniedException {
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+    public ApiResponse<BoardOuterResponseDto> toggleBoardLike(Long boardId, UserDetailsImpl userDetailsImpl) throws AccessDeniedException {
+        User user = userRepository.findByUsername(userDetailsImpl.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
 

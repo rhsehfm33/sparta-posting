@@ -8,10 +8,15 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class CommentRequestDto {
-    @Size(min = 1, max=200)
-    private String commentContent;
+public class ReplyRequestDto {
+    @Size(min = 1, max = 200)
+    private String replyContent;
 
     @NotNull
     private Long boardId;
+
+    @NotNull
+    private Long commentId;
+
+    private Long replyId;
 }

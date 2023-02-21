@@ -9,10 +9,7 @@ import com.sparta.posting.entity.CommentLike;
 import com.sparta.posting.entity.User;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
-import com.sparta.posting.repository.BoardRepository;
-import com.sparta.posting.repository.CommentLikeRepository;
-import com.sparta.posting.repository.CommentRepository;
-import com.sparta.posting.repository.UserRepository;
+import com.sparta.posting.repository.*;
 import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.util.ResponseEntityConverter;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +29,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final ReplyRepository replyRepository;
 
     @Transactional
     public ApiResponse<CommentOuterResponseDto> createComment(
@@ -47,17 +45,7 @@ public class CommentService {
                 () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND.getMessage())
         );
 
-        Comment parentComment = null;
-        if (commentRequestDto.getParentCommentId() != null) {
-            parentComment = commentRepository.findByIdAndBoard_Id(
-                    commentRequestDto.getParentCommentId(),
-                    commentRequestDto.getBoardId())
-                    .orElseThrow(
-                            () -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
-                    );
-        }
-
-        Comment newComment = new Comment(commentRequestDto, user, board, parentComment);
+        Comment newComment = new Comment(commentRequestDto, user, board);
         commentRepository.save(newComment);
 
         return ApiResponse.successOf(HttpStatus.CREATED, CommentOuterResponseDto.of(newComment));
@@ -88,9 +76,9 @@ public class CommentService {
     }
 
     @Transactional
-    public ApiResponse<CommentOuterResponseDto> deleteComment(Long commentId, UserDetails userDetails) throws AccessDeniedException {
+    public ApiResponse<CommentOuterResponseDto> deleteComment(Long commentId, UserDetailsImpl userDetailsImpl) throws AccessDeniedException {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+        User user = userRepository.findByUsername(userDetailsImpl.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
 
@@ -101,6 +89,8 @@ public class CommentService {
         if (user.getRole() != UserRoleEnum.ADMIN && comment.getUser() != user) {
             throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
+
+        replyRepository.findAllByComment_Id(comment.getId());
 
         commentRepository.delete(comment);
 

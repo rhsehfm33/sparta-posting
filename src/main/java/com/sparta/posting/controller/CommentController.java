@@ -22,18 +22,18 @@ public class CommentController {
     @PostMapping
     public ApiResponse<CommentOuterResponseDto> createComment(
             @RequestBody @Valid CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) {
-       return commentService.createComment(commentRequestDto, userDetails);
+       return commentService.createComment(commentRequestDto, userDetailsImpl);
     }
 
     @PutMapping("/{commentId}")
     public ApiResponse<CommentOuterResponseDto> updateComment(
             @PathVariable Long commentId,
             @RequestBody @Valid CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
-        return commentService.updateComment(commentId, commentRequestDto, userDetails);
+        return commentService.updateComment(commentId, commentRequestDto, userDetailsImpl);
     }
 
     @DeleteMapping("/{commentId}")
