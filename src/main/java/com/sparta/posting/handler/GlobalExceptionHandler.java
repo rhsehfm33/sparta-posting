@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<ErrorResponseDto>> handleEntityNotFoundException(EntityNotFoundException e) {
         log.error(e.toString() + " occurred: {}", e.getMessage());
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(ErrorType.ENTITY_NOT_FOUND_EXCEPTION, e.getMessage());
-        ApiResponse<ErrorResponseDto> errorResponseData = ApiResponse.failOf(HttpStatus.INTERNAL_SERVER_ERROR, errorResponseDto);
+        ApiResponse<ErrorResponseDto> errorResponseData = ApiResponse.failOf(HttpStatus.BAD_REQUEST, errorResponseDto);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseData);
     }
 
