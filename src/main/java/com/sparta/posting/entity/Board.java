@@ -26,11 +26,11 @@ public class Board extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board")
     @OrderBy("createdAt DESC")
     private List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board")
     private List<BoardLike> boardLikeList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, User user) {
