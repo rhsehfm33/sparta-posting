@@ -1,10 +1,13 @@
 package com.sparta.posting.dto;
 
-import com.sparta.posting.entity.Comment;
 import com.sparta.posting.entity.Reply;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class ReplyOuterResponseDto {
     private long id;
     private String replyContent;
