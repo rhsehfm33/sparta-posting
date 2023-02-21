@@ -46,7 +46,7 @@ public class BoardService {
                 .map(board -> BoardOuterResponseDto.of(board))
                 .collect(Collectors.toList());
 
-        return ApiResponse.successOf(HttpStatus.CREATED, boardResponseDtoList);
+        return ApiResponse.successOf(HttpStatus.OK, boardResponseDtoList);
     }
 
     @Transactional
