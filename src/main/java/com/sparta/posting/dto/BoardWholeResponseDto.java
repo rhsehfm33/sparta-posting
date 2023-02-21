@@ -21,7 +21,7 @@ public class BoardWholeResponseDto {
     private List<CommentOuterResponseDto> commentList;
     private long likes;
 
-    public BoardWholeResponseDto(Board board) {
+    BoardWholeResponseDto(Board board) {
         this.id = board.getId();
         this.category = board.getCategory();
         this.boardContent = board.getBoardContent();
@@ -34,5 +34,9 @@ public class BoardWholeResponseDto {
                     .collect(Collectors.toList());
         }
         this.likes = board.getBoardLikeList().size();
+    }
+
+    public static BoardWholeResponseDto of(Board board) {
+        return new BoardWholeResponseDto(board);
     }
 }

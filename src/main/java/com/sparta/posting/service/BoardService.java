@@ -8,10 +8,8 @@ import com.sparta.posting.repository.BoardLikeRepository;
 import com.sparta.posting.repository.BoardRepository;
 import com.sparta.posting.repository.UserRepository;
 import com.sparta.posting.security.UserDetailsImpl;
-import com.sparta.posting.util.ResponseEntityConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +47,15 @@ public class BoardService {
                 .collect(Collectors.toList());
 
         return ApiResponse.successOf(HttpStatus.CREATED, boardResponseDtoList);
+    }
+
+    @Transactional
+    public ApiResponse<BoardWholeResponseDto> getBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND.getMessage())
+        );
+
+        return ApiResponse.successOf(HttpStatus.OK, BoardWholeResponseDto.of(board));
     }
 
     @Transactional

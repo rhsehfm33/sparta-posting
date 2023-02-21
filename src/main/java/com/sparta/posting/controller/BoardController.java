@@ -1,9 +1,6 @@
 package com.sparta.posting.controller;
 
-import com.sparta.posting.dto.ApiResponse;
-import com.sparta.posting.dto.BoardOuterResponseDto;
-import com.sparta.posting.dto.BoardRequestDto;
-import com.sparta.posting.dto.UserOuterResponseDto;
+import com.sparta.posting.dto.*;
 import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +29,11 @@ public class BoardController {
     @GetMapping
     public ApiResponse<List<BoardOuterResponseDto>> getBoards() {
         return boardService.getBoards();
+    }
+
+    @GetMapping("/{boardId}")
+    public ApiResponse<BoardWholeResponseDto> getBoard(@PathVariable Long boardId) {
+        return boardService.getBoard(boardId);
     }
 
     @PutMapping("/{boardId}")
