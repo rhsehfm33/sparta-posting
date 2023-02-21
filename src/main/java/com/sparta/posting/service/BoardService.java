@@ -4,10 +4,7 @@ import com.sparta.posting.dto.*;
 import com.sparta.posting.entity.*;
 import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
-import com.sparta.posting.repository.BoardLikeRepository;
-import com.sparta.posting.repository.BoardRepository;
-import com.sparta.posting.repository.CommentRepository;
-import com.sparta.posting.repository.UserRepository;
+import com.sparta.posting.repository.*;
 import com.sparta.posting.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +24,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardLikeRepository boardLikeRepository;
     private final CommentRepository commentRepository;
+    private final ReplyRepository replyRepository;
 
     @Transactional
     public ApiResponse<BoardOuterResponseDto> createBoard(BoardRequestDto boardRequestDto, UserDetailsImpl userDetails) {
@@ -101,6 +99,8 @@ public class BoardService {
         if (user.getRole() != UserRoleEnum.ADMIN && board.getUser() != user) {
             throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
+
+        replyRepository.deleteAllByBoard_Id(board.getId());
 
         commentRepository.deleteAllByBoard_Id(board.getId());
 
