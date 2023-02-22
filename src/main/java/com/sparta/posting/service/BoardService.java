@@ -119,7 +119,7 @@ public class BoardService {
                 () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND.getMessage())
         );
 
-        if (user.getRole() != UserRoleEnum.ADMIN && board.getUser() != user) {
+        if (board.getUser() != user) {
             throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
 
