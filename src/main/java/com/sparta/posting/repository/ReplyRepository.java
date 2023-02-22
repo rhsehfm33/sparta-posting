@@ -12,5 +12,7 @@ import java.util.List;
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
     List<Reply> findAllByComment_Id(Long commentId);
 
-    List<Reply> deleteAllByBoard_Id(Long boardId);
+    void deleteAllByComment_Id(Long commentId);
+
+    void deleteAllByBoard_Id(Long boardId);
 }

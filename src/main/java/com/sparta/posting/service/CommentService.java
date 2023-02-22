@@ -19,12 +19,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+    private final EntityManager entityManager;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
@@ -90,7 +92,7 @@ public class CommentService {
             throw new AccessDeniedException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
 
-        replyRepository.findAllByComment_Id(comment.getId());
+        replyRepository.deleteAllByComment_Id(comment.getId());
 
         commentRepository.delete(comment);
 
