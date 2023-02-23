@@ -23,7 +23,7 @@ public class BoardOuterResponseDto {
         this.boardContent = board.getBoardContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
-        this.likes = board.getBoardLikeList().size();
+        this.likes = board.getBoardLikeSet().size();
     }
 
     public static BoardOuterResponseDto of(Board board) {

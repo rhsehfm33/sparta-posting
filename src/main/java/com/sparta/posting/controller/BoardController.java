@@ -4,6 +4,7 @@ import com.sparta.posting.dto.*;
 import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,8 @@ public class BoardController {
     }
 
     @GetMapping
-    public ApiResponse<List<BoardOuterResponseDto>> getBoards() {
-        return boardService.getBoards();
+    public ApiResponse<List<BoardWholeResponseDto>> getBoards() {
+        return ApiResponse.successOf(HttpStatus.OK, boardService.getBoards());
     }
 
     @GetMapping("/{boardId}")

@@ -40,13 +40,9 @@ public class BoardService {
     }
 
     @Transactional
-    public ApiResponse<List<BoardOuterResponseDto>> getBoards() {
-        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
-        List<BoardOuterResponseDto> boardResponseDtoList = boardList.stream()
-                .map(board -> BoardOuterResponseDto.of(board))
-                .collect(Collectors.toList());
-
-        return ApiResponse.successOf(HttpStatus.OK, boardResponseDtoList);
+    public List<BoardWholeResponseDto> getBoards() {
+        List<BoardWholeResponseDto> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
+        return boardList;
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.sparta.posting.dto;
 
 import com.sparta.posting.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class UserOuterResponseDto {
     private Long id;
     private String username;

@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public class Comment extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,10 +27,10 @@ public class Comment extends Timestamped {
     private Board board;
 
     @OneToMany(mappedBy = "comment")
-    private List<Reply> replies = new ArrayList<>();
+    private Set<Reply> replies = new HashSet<>();
 
     @OneToMany(mappedBy = "comment")
-    private List<CommentLike> likedCommentList = new ArrayList<>();
+    private Set<CommentLike> likedCommentSet = new HashSet<>();
 
 
     public Comment(CommentRequestDto commentRequestDto, User user, Board board) {
