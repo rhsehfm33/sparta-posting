@@ -26,7 +26,7 @@ public class UserService {
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public ApiResponse<UserOuterResponseDto> signup(SignupRequestDto signupRequestDto) {
+    public UserOuterResponseDto signup(SignupRequestDto signupRequestDto) {
         // username 중복 확인
         Optional<User> found = userRepository.findByUsername(signupRequestDto.getUsername());
         if (found.isPresent()) {
@@ -43,11 +43,11 @@ public class UserService {
         User newUser = new User(signupRequestDto);
         userRepository.save(newUser);
 
-        return ApiResponse.successOf(HttpStatus.CREATED, UserOuterResponseDto.of(newUser));
+        return UserOuterResponseDto.of(newUser);
     }
 
     @Transactional(readOnly = true)
-    public ApiResponse<UserOuterResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public UserOuterResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         // 사용자 확인
         User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
@@ -59,6 +59,6 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
-        return ApiResponse.successOf(HttpStatus.OK, UserOuterResponseDto.of(user));
+        return UserOuterResponseDto.of(user);
     }
 }

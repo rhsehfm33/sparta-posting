@@ -6,7 +6,7 @@ import com.sparta.posting.dto.CommentRequestDto;
 import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class CommentController {
             @RequestBody @Valid CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) {
-       return commentService.createComment(commentRequestDto, userDetailsImpl);
+       return ApiResponse.successOf(HttpStatus.CREATED, commentService.createComment(commentRequestDto, userDetailsImpl));
     }
 
     @PutMapping("/{commentId}")
@@ -33,22 +33,24 @@ public class CommentController {
             @RequestBody @Valid CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
-        return commentService.updateComment(commentId, commentRequestDto, userDetailsImpl);
+        return ApiResponse.successOf(HttpStatus.OK, commentService.updateComment(commentId, commentRequestDto, userDetailsImpl));
     }
 
     @DeleteMapping("/{commentId}")
     public ApiResponse<CommentOuterResponseDto> deleteComment(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
-        return commentService.deleteComment(commentId, userDetails);
+        commentService.deleteComment(commentId, userDetailsImpl);
+        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 
     @PostMapping("/like/{commentId}")
     public ApiResponse<CommentOuterResponseDto> createComment(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
-        return commentService.toggleCommentLike(commentId, userDetails);
+        commentService.toggleCommentLike(commentId, userDetailsImpl);
+        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 }

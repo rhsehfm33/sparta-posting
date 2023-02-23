@@ -1,6 +1,5 @@
 package com.sparta.posting.service;
 
-import com.sparta.posting.dto.ApiResponse;
 import com.sparta.posting.dto.CommentOuterResponseDto;
 import com.sparta.posting.dto.CommentRequestDto;
 import com.sparta.posting.entity.Board;
@@ -11,22 +10,16 @@ import com.sparta.posting.enums.ErrorMessage;
 import com.sparta.posting.enums.UserRoleEnum;
 import com.sparta.posting.repository.*;
 import com.sparta.posting.security.UserDetailsImpl;
-import com.sparta.posting.util.ResponseEntityConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-    private final EntityManager entityManager;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
@@ -34,7 +27,7 @@ public class CommentService {
     private final ReplyRepository replyRepository;
 
     @Transactional
-    public ApiResponse<CommentOuterResponseDto> createComment(
+    public CommentOuterResponseDto createComment(
             CommentRequestDto commentRequestDto,
             UserDetailsImpl userDetailsImpl
     ) {
@@ -50,11 +43,11 @@ public class CommentService {
         Comment newComment = new Comment(commentRequestDto, user, board);
         commentRepository.save(newComment);
 
-        return ApiResponse.successOf(HttpStatus.CREATED, CommentOuterResponseDto.of(newComment));
+        return CommentOuterResponseDto.of(newComment);
     }
 
     @Transactional
-    public ApiResponse<CommentOuterResponseDto> updateComment(
+    public CommentOuterResponseDto updateComment(
             Long commentId,
             CommentRequestDto commentRequestDto,
             UserDetailsImpl userDetailsImpl
@@ -74,11 +67,11 @@ public class CommentService {
 
         comment.update(commentRequestDto, user);
 
-        return ApiResponse.successOf(HttpStatus.OK, CommentOuterResponseDto.of(comment));
+        return CommentOuterResponseDto.of(comment);
     }
 
     @Transactional
-    public ApiResponse<CommentOuterResponseDto> deleteComment(Long commentId, UserDetailsImpl userDetailsImpl) throws AccessDeniedException {
+    public void deleteComment(Long commentId, UserDetailsImpl userDetailsImpl) throws AccessDeniedException {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(userDetailsImpl.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
@@ -95,12 +88,10 @@ public class CommentService {
         replyRepository.deleteAllByComment_Id(comment.getId());
 
         commentRepository.delete(comment);
-
-        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 
     @Transactional
-    public ApiResponse<CommentOuterResponseDto> toggleCommentLike(Long commentId, UserDetailsImpl userDetails) throws AccessDeniedException {
+    public void toggleCommentLike(Long commentId, UserDetailsImpl userDetails) throws AccessDeniedException {
         User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
@@ -120,7 +111,5 @@ public class CommentService {
         else {
             commentLikeRepository.delete(commentLike);
         }
-
-        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 }

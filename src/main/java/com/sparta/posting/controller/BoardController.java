@@ -5,7 +5,6 @@ import com.sparta.posting.security.UserDetailsImpl;
 import com.sparta.posting.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class BoardController {
             @RequestBody @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return boardService.createBoard(requestDto, userDetails);
+        return ApiResponse.successOf(HttpStatus.CREATED, boardService.createBoard(requestDto, userDetails));
     }
 
     @GetMapping
@@ -43,22 +42,24 @@ public class BoardController {
             @RequestBody @Valid BoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws AccessDeniedException {
-        return boardService.update(boardId, requestDto, userDetails);
+        return ApiResponse.successOf(HttpStatus.OK, boardService.update(boardId, requestDto, userDetails));
     }
 
     @DeleteMapping("/{boardId}")
     public ApiResponse<BoardOuterResponseDto> deleteBoard(
             @PathVariable Long boardId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
-        return boardService.deleteBoard(boardId, userDetails);
+        boardService.deleteBoard(boardId, userDetailsImpl);
+        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 
     @PostMapping("/like/{boardId}")
     public ApiResponse<BoardOuterResponseDto> toggleLikeBoard(
             @PathVariable Long boardId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl
     ) throws AccessDeniedException {
-        return boardService.toggleBoardLike(boardId, userDetails);
+        boardService.toggleBoardLike(boardId, userDetailsImpl);
+        return ApiResponse.successOf(HttpStatus.OK, boardService.toggleBoardLike(boardId, userDetailsImpl));
     }
 }

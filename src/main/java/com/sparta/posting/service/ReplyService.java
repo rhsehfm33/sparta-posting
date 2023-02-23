@@ -33,7 +33,7 @@ public class ReplyService {
 
 
     @Transactional
-    public ApiResponse<ReplyOuterResponseDto> createReply(ReplyRequestDto replyRequestDto, UserDetailsImpl userDetailsImpl) {
+    public ReplyOuterResponseDto createReply(ReplyRequestDto replyRequestDto, UserDetailsImpl userDetailsImpl) {
         // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
         User user = userRepository.findByUsername(userDetailsImpl.getUsername()).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
@@ -50,11 +50,11 @@ public class ReplyService {
         Reply newReply = new Reply(replyRequestDto.getReplyContent(), user, board, comment);
         replyRepository.save(newReply);
 
-        return ApiResponse.successOf(HttpStatus.OK, ReplyOuterResponseDto.of(newReply));
+        return ReplyOuterResponseDto.of(newReply);
     }
 
     @Transactional
-    public ApiResponse<List<ReplyOuterResponseDto>> getReplies(Long commentId) {
+    public List<ReplyOuterResponseDto> getReplies(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.COMMENT_NOT_FOUND.getMessage())
         );
@@ -64,28 +64,26 @@ public class ReplyService {
                 .map(reply -> ReplyOuterResponseDto.of(reply))
                 .collect(Collectors.toList());
 
-        return ApiResponse.successOf(HttpStatus.OK, replyOuterResponseDtoList);
+        return replyOuterResponseDtoList;
     }
 
     @Transactional
-    public ApiResponse<ReplyOuterResponseDto> updateReply(ReplyRequestDto replyRequestDto, Long replyId, UserDetailsImpl userDetailsImpl) {
+    public ReplyOuterResponseDto updateReply(ReplyRequestDto replyRequestDto, Long replyId, UserDetailsImpl userDetailsImpl) {
         Reply reply = replyRepository.findById(replyId).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.REPLY_NOT_FOUND.getMessage())
         );
 
         reply.update(replyRequestDto);
 
-        return ApiResponse.successOf(HttpStatus.OK, ReplyOuterResponseDto.of(reply));
+        return ReplyOuterResponseDto.of(reply);
     }
 
     @Transactional
-    public ApiResponse<ReplyOuterResponseDto> deleteReply(ReplyRequestDto replyRequestDto, Long replyId, UserDetailsImpl userDetailsImpl) {
+    public void deleteReply(ReplyRequestDto replyRequestDto, Long replyId, UserDetailsImpl userDetailsImpl) {
         Reply reply = replyRepository.findById(replyId).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.REPLY_NOT_FOUND.getMessage())
         );
 
         replyRepository.delete(reply);
-
-        return ApiResponse.successOf(HttpStatus.OK, null);
     }
 }
