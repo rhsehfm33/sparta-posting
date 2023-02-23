@@ -2,6 +2,7 @@ package com.sparta.posting.dto;
 
 import com.sparta.posting.enums.UserRoleEnum;
 import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 
 @Setter
 @Getter
+@AllArgsConstructor
 public class SignupRequestDto {
     @Size(min=4, max=10)
     @Pattern(regexp="^[a-z0-9]+$")
