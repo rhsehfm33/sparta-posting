@@ -46,12 +46,12 @@ public class BoardService {
     }
 
     @Transactional
-    public ApiResponse<BoardWholeResponseDto> getBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(
+    public BoardWholeResponseDto getBoard(Long boardId) {
+        BoardWholeResponseDto boardWholeResponseDto = boardRepository.findBoardWholeDtoByBoardId(boardId).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.BOARD_NOT_FOUND.getMessage())
         );
 
-        return ApiResponse.successOf(HttpStatus.OK, BoardWholeResponseDto.of(board));
+        return boardWholeResponseDto;
     }
 
     @Transactional

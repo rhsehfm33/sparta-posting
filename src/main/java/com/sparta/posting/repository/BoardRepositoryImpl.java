@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -63,6 +64,52 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         )
                 ));
         return boardDtoList;
+    }
+
+    @Override
+    public Optional<BoardWholeResponseDto> findBoardWholeDtoByBoardId(Long boardId) {
+        QBoard board = QBoard.board;
+        QUser user = QUser.user;
+        QComment comment = QComment.comment;
+
+        BoardWholeResponseDto boardDto = queryFactory
+                .selectFrom(board)
+                .where(board.id.eq(boardId))
+                .limit(1)
+                .leftJoin(board.user, user)
+                .leftJoin(comment)
+                .on(comment.board.eq(board))
+                .transform(groupBy(board.id).list(
+                        Projections.constructor(
+                                BoardWholeResponseDto.class,
+                                board.id,
+                                board.category,
+                                board.boardContent,
+                                board.createdAt,
+                                board.modifiedAt,
+                                board.boardLikeSet.size().longValue(),
+                                Projections.constructor(
+                                        UserOuterResponseDto.class,
+                                        user.id,
+                                        user.username,
+                                        user.email,
+                                        user.createdAt,
+                                        user.modifiedAt
+                                ),
+                                Projections.list(
+                                        Projections.constructor(
+                                                CommentOuterResponseDto.class,
+                                                comment.id,
+                                                comment.commentContent,
+                                                comment.createdAt,
+                                                comment.modifiedAt,
+                                                comment.likedCommentSet.size().longValue()
+                                        )
+                                )
+                        )
+                )).get(0);
+
+        return Optional.of(boardDto);
 
     }
 }

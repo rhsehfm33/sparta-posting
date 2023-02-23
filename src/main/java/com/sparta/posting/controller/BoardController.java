@@ -34,7 +34,7 @@ public class BoardController {
 
     @GetMapping("/{boardId}")
     public ApiResponse<BoardWholeResponseDto> getBoard(@PathVariable Long boardId) {
-        return boardService.getBoard(boardId);
+        return ApiResponse.successOf(HttpStatus.OK, boardService.getBoard(boardId));
     }
 
     @PutMapping("/{boardId}")
