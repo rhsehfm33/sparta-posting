@@ -27,6 +27,10 @@ public class UserService {
 
     @Transactional
     public UserOuterResponseDto signup(SignupRequestDto signupRequestDto) {
+        String username = signupRequestDto.getUsername();
+        String password = passwordEncoder.encode(signupRequestDto.getPassword());
+
+        
         // username 중복 확인
         Optional<User> found = userRepository.findByUsername(signupRequestDto.getUsername());
         if (found.isPresent()) {
