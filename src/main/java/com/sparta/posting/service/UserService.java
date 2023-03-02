@@ -30,11 +30,10 @@ public class UserService {
     @Transactional
     public UserOuterResponseDto signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
-        String password = passwordEncoder.encode(signupRequestDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
 
-        
         // username 중복 확인
-        Optional<User> found = userRepository.findByUsername(signupRequestDto.getUsername());
+        Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
             throw new IllegalArgumentException(ErrorMessage.USERNAME_DUPLICATION.getMessage());
         }
@@ -46,7 +45,7 @@ public class UserService {
             }
         }
 
-        User newUser = new User(signupRequestDto);
+        User newUser = new User(signupRequestDto, encodedPassword);
         userRepository.save(newUser);
 
         return UserOuterResponseDto.of(newUser);
