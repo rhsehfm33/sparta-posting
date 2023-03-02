@@ -11,6 +11,7 @@ public enum ErrorType {
     ENTITY_NOT_FOUND_EXCEPTION("entity not found error"),
     VALIDATION_EXCEPTION("validation fail error"),
     JWT_EXCEPTION("token invalid error"),
+    BAD_CREDENTIALS_EXCEPTION("user's password is wrong"),
     ILLEGAL_ARGUMENT_EXCEPTION("wrong argument error"),
     ACCESS_DENIED_EXCEPTION("don't have authority to do so"),
     AUTHENTICATION_EXCEPTION("authentication has failed");

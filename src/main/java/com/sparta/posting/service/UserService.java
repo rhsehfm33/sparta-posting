@@ -11,6 +11,7 @@ import com.sparta.posting.jwt.JwtUtil;
 import com.sparta.posting.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,8 +60,8 @@ public class UserService {
         );
 
         // 비밀번호 확인
-        if (!user.getPassword().equals(loginRequestDto.getPassword())){
-            throw  new EntityNotFoundException(ErrorMessage.WRONG_PASSWORD.getMessage());
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException(ErrorMessage.WRONG_PASSWORD.getMessage());
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));

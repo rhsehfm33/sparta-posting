@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -72,6 +73,14 @@ public class GlobalExceptionHandler {
         log.error(e.toString() + " occurred: {}", e.getMessage());
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(ErrorType.ACCESS_DENIED_EXCEPTION, e.getMessage());
         ApiResponse<ErrorResponseDto> errorResponseData = ApiResponse.failOf(HttpStatus.INTERNAL_SERVER_ERROR, errorResponseDto);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseData);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleAccessDeniedException(BadCredentialsException e) {
+        log.error(e.toString() + " occurred: {}", e.getMessage());
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(ErrorType.BAD_CREDENTIALS_EXCEPTION, e.getMessage());
+        ApiResponse<ErrorResponseDto> errorResponseData = ApiResponse.failOf(HttpStatus.UNAUTHORIZED, errorResponseDto);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseData);
     }
 }
